@@ -1,4 +1,5 @@
 import { sh } from "https://denopkg.com/quite4work/deno-shell-tag";
+import { delay } from "https://deno.land/std@0.92.0/async/mod.ts";
 
 // DWIM function
 export async function start() {
