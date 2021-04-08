@@ -1,5 +1,6 @@
 import { promptSecret } from "https://denopkg.com/quite4work/deno-prompts";
 
+// DWIM function
 export async function getPass() {
   let pass = Deno.env.get("ANSIBLE_VAULT_PASSWORD_FILE");
   if (pass) {
