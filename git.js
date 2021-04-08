@@ -1,4 +1,5 @@
 import { sh } from "https://denopkg.com/quite4work/deno-shell-tag";
+import * as path from "https://deno.land/std@0.92.0/path/mod.ts";
 
 export async function cloneToTempDir(url) {
   const regularUrl = url.replace(/^git@/, "");
