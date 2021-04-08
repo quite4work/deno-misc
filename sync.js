@@ -3,7 +3,7 @@ import * as fs from "https://deno.land/std@0.92.0/fs/mod.ts";
 import { pathToRegexp } from "https://deno.land/x/path_to_regexp@v6.2.0/index.ts";
 import { delay } from "https://deno.land/std@0.92.0/async/mod.ts";
 
-export async function sync(src, dest, exclude) {
+export async function all(src, dest, exclude = []) {
   const skip = exclude.map((e) =>
     pathToRegexp(path.join(src, e), [], { end: false })
   );
