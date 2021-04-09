@@ -14,10 +14,10 @@ export async function write(file, obj) {
 }
 
 export async function edit(file, func) {
-  let yml = await readYaml(file);
+  let yml = await read(file);
   let res = await func(yml);
   if (res) {
     yml = res;
   }
-  await writeYaml(file, yml);
+  await write(file, yml);
 }
