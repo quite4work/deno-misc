@@ -25,3 +25,10 @@ export async function replaceAllInFile(file, regex, replacement = "") {
     newText,
   );
 }
+
+export function join(arrayOrAny, sep = ",") {
+  if (Array.isArray(arrayOrAny)) {
+    return arrayOrAny.join(sep);
+  }
+  return arrayOrAny.toString();
+}
