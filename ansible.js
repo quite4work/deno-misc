@@ -21,13 +21,22 @@ export async function getPass() {
   return pass;
 }
 
+export async function vault(strings, ...args) {
+  let result = strings[0];
+  for (let i = 1; i < strings.length; i++) {
+    result += args[i - 1].toString();
+    result += strings[i];
+  }
+  return result.trim();
+}
+
 const VaultType = new Type("!vault", {
   kind: "scalar",
   resolve(data) {
-    return /\$ANSIBLE_VAULT/.test(data);
+    return /\^$ANSIBLE_VAULT/.test(data);
   },
   predicate(data) {
-    return /\$ANSIBLE_VAULT/.test(data);
+    return /\^$ANSIBLE_VAULT/.test(data);
   },
 });
 const schema = DEFAULT_SCHEMA.extend({ explicit: [VaultType] });
