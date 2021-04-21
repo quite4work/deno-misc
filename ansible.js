@@ -33,10 +33,10 @@ export function vault(strings, ...args) {
 const VaultType = new Type("!vault", {
   kind: "scalar",
   resolve(data) {
-    return /\^$ANSIBLE_VAULT/.test(data);
+    return /^\$ANSIBLE_VAULT/.test(data);
   },
   predicate(data) {
-    return /\^$ANSIBLE_VAULT/.test(data);
+    return /^\$ANSIBLE_VAULT/.test(data);
   },
 });
 const schema = DEFAULT_SCHEMA.extend({ explicit: [VaultType] });
