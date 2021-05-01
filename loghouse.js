@@ -3,6 +3,9 @@ import * as csv from "https://deno.land/std@0.95.0/encoding/csv.ts";
 import { writeAll } from "https://deno.land/std@0.95.0/io/util.ts";
 import * as highlight from "./highlight.js";
 import * as re from "./re.js";
+// import { Webview } from "https://deno.land/x/webview@0.5.6/mod.ts";
+import { open } from "https://deno.land/x/opener/mod.ts";
+import * as fs from "https://deno.land/std@0.95.0/fs/mod.ts";
 
 function concat(strings, keys) {
   let result = strings[0];
@@ -48,20 +51,29 @@ const log = {
 
 export const query = { log };
 
-export function configure(host, auth, preQuery) {
+export function configure(
+  { host, auth, query: preQuery, output = "log.html", format = "full" },
+) {
   const cli = cac();
-  cli.command("query [...string]")
+  cli.command("[...string]")
     .option("-f, --from <from>", "Time from", {
       default: "now-1m",
+    })
+    .option("--host <from>", "Host", {
+      default: host,
+    })
+    .option("--auth <auth>", "Auth token", {
+      default: auth,
     })
     .option("-t, --to <to>", "Time to", {
       default: "now",
     })
+    .option("-o, --output <output>", "Output file name", {
+      default: output,
+    })
     .option("--format <format>", "Format", {
-      default: "mini",
-    }).action((queryStrings, opts) =>
-      queryCmd(host, auth, preQuery, queryStrings, opts)
-    );
+      default: format,
+    }).action((queryStrings, opts) => queryCmd(preQuery, queryStrings, opts));
   cli.help();
   cli.parse();
 }
@@ -80,11 +92,9 @@ export function buidQuery(query, res = []) {
 }
 
 async function queryCmd(
-  host,
-  auth,
   preQuery,
   queryStrings,
-  { from, to, format },
+  { host, auth, from, to, format, output },
 ) {
   const queryString = queryStrings.join(" ");
   const shown_keys = [
@@ -104,7 +114,6 @@ async function queryCmd(
   } else if (preQuery) {
     resQuery = preQuery;
   }
-  console.log(`Query: ${resQuery}\n`);
   const qsObj = {
     time_format: "range",
     seek_to: "",
@@ -136,13 +145,20 @@ async function queryCmd(
   }
   const logs = await csv.parse(csvText, { skipFirstRow: true });
   let outFile;
+  const outFileExisted = await fs.exists(output);
   try {
     if (format === "html") {
-      outFile = await Deno.open("out.html", {
+      outFile = await Deno.open(output, {
         truncate: true,
         create: true,
         write: true,
       });
+      await addHtmlHeader(outFile);
+      const header =
+        `Query: <pre style="white-space: pre-wrap"><code class="sql">${resQuery}</code></pre>`;
+      await writeAll(outFile, new TextEncoder().encode(header));
+    } else {
+      console.log(`Query: ${resQuery}\n`);
     }
     for (
       const {
@@ -156,29 +172,35 @@ async function queryCmd(
         log,
       } of logs
     ) {
+      const details =
+        `${timestamp} host = "${host}" stream = "${stream}" source = "${source}" namespace = "${namespace}" pod_name = "${pod_name}" container_name = "${container_name}"`;
       if (format === "full") {
-        console.log(
-          `* ${timestamp} host = "${host}" stream = "${stream}" source = "${source}" namespace = "${namespace}" pod_name = "${pod_name}" container_name = "${container_name}"`,
-        );
-        console.log(
-          `${log}\n`,
-        );
+        console.log(`* ${details}\n${log}\n`);
       } else if (format === "short") {
-        console.log(
-          `${log} // ${timestamp} host = "${host}"  stream = "${stream}" stream = "${source}" namespace = "${namespace}" pod_name = "${pod_name}" container_name = "${container_name}"`,
-        );
+        console.log(`|${log} // ${details}`);
       } else if (format === "mini") {
         console.log(`|${log}`);
       } else if (outFile) {
         const log2 = higligthLog(log);
         const line =
-          `<details style="white-space: nowrap"><summary>${log2}</summary>* ${timestamp} ${host} ${stream} source:'${source}' namespace:'${namespace}' pod_name:'${pod_name}' container_name:'${container_name}</details>`;
+          `<details style="white-space: nowrap"><summary><code>${log2}</code></summary><code>* ${details}</code></details>`;
         await writeAll(outFile, new TextEncoder().encode(line));
       }
     }
   } finally {
     if (outFile) {
+      await writeAll(outFile, new TextEncoder().encode("</body>"));
       Deno.close(outFile.rid);
+      console.log(`open ${output}`);
+      if (!outFileExisted) {
+        await open(output);
+      }
+      // const html = await Deno.readTextFile(output);
+      // const webview = new Webview({
+      //   url: `data:text/html,${encodeURIComponent(html)}`,
+      // });
+      // webview.setMaximized(true);
+      // await webview.run();
     }
   }
 }
@@ -198,7 +220,23 @@ function higligthLog(str) {
     time: "blue",
     date: "blue",
     level: "green",
-    file: "geen",
-    line: "green",
+    file: "green",
+    line: "blue",
   });
+}
+
+async function addHtmlHeader(outFile) {
+  const line = `
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@10.7.2/styles/idea.min.css">
+<link href="themes/prism.css" rel="stylesheet" />
+</head>
+<body>
+<script src="https://unpkg.com/@highlightjs/cdn-assets@10.7.2/highlight.min.js"></script>
+<script src="https://unpkg.com/@highlightjs/cdn-assets@10.7.2/languages/sql.min.js"></script>
+<script>hljs.highlightAll();</script>
+`;
+  await writeAll(outFile, new TextEncoder().encode(line));
 }
