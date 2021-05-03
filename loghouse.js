@@ -3,23 +3,15 @@ import * as csv from "https://deno.land/std@0.95.0/encoding/csv.ts";
 import { writeAll } from "https://deno.land/std@0.95.0/io/util.ts";
 import * as highlight from "./highlight.js";
 import * as re from "./re.js";
+import * as adhoc from "./adhoc.js";
 import { open } from "https://deno.land/x/opener/mod.ts";
 import * as fs from "https://deno.land/std@0.95.0/fs/mod.ts";
 import * as path from "https://deno.land/std@0.92.0/path/mod.ts";
 import "https://unpkg.com/sql-formatter@4.0.2/dist/sql-formatter.js";
 
-function concat(strings, keys) {
-  let result = strings[0];
-  for (let i = 1; i < strings.length; i++) {
-    result += keys[i - 1].toString();
-    result += strings[i];
-  }
-  return result;
-}
-
 const log = {
   include(strings, ...keys) {
-    return concat(strings, keys).split("\n")
+    return adhoc.joinTagArgs(strings, keys).split("\n")
       .filter((s) => {
         if (!s.trim()) return false;
         return !/^\s*\/\/.*/.test(s);
@@ -34,7 +26,7 @@ const log = {
       );
   },
   exclude(strings, ...keys) {
-    return concat(strings, keys).split("\n")
+    return adhoc.joinTagArgs(strings, keys).split("\n")
       .filter((s) => {
         if (!s.trim()) return false;
         return !/^\s*\/\/.*/.test(s);
