@@ -3,7 +3,6 @@ import * as csv from "https://deno.land/std@0.95.0/encoding/csv.ts";
 import { writeAll } from "https://deno.land/std@0.95.0/io/util.ts";
 import * as highlight from "./highlight.js";
 import * as re from "./re.js";
-// import { Webview } from "https://deno.land/x/webview@0.5.6/mod.ts";
 import { open } from "https://deno.land/x/opener/mod.ts";
 import * as fs from "https://deno.land/std@0.95.0/fs/mod.ts";
 
@@ -154,8 +153,7 @@ async function queryCmd(
         write: true,
       });
       await addHtmlHeader(outFile);
-      const header =
-        `Query: <pre style="white-space: pre-wrap"><code class="sql">${resQuery}</code></pre>`;
+      const header = `Query: <code class="language-sql">${resQuery}</code>`;
       await writeAll(outFile, new TextEncoder().encode(header));
     } else {
       console.log(`Query: ${resQuery}\n`);
@@ -183,7 +181,7 @@ async function queryCmd(
       } else if (outFile) {
         const log2 = higligthLog(log);
         const line =
-          `<details style="white-space: nowrap"><summary><code>${log2}</code></summary><code>* ${details}</code></details>`;
+          `<details style="white-space: nowrap"><summary><code>${log2}</code></summary><code class="language-sql">* ${details}</code></details>`;
         await writeAll(outFile, new TextEncoder().encode(line));
       }
     }
@@ -195,12 +193,6 @@ async function queryCmd(
       if (!outFileExisted) {
         await open(output);
       }
-      // const html = await Deno.readTextFile(output);
-      // const webview = new Webview({
-      //   url: `data:text/html,${encodeURIComponent(html)}`,
-      // });
-      // webview.setMaximized(true);
-      // await webview.run();
     }
   }
 }
@@ -222,6 +214,7 @@ function higligthLog(str) {
     level: "green",
     file: "green",
     line: "blue",
+    // log: { $: re.log(), string: "red", filePath: "green", uuid: "purpure" },
   });
 }
 
@@ -230,13 +223,11 @@ async function addHtmlHeader(outFile) {
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@10.7.2/styles/idea.min.css">
-<link href="themes/prism.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css" rel="stylesheet" />
 </head>
 <body>
-<script src="https://unpkg.com/@highlightjs/cdn-assets@10.7.2/highlight.min.js"></script>
-<script src="https://unpkg.com/@highlightjs/cdn-assets@10.7.2/languages/sql.min.js"></script>
-<script>hljs.highlightAll();</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
 `;
   await writeAll(outFile, new TextEncoder().encode(line));
 }

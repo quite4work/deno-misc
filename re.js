@@ -10,6 +10,17 @@ export function re(strings, ...keys) {
       result += k.source;
     } else if (typeof k === "function") {
       result += k().source;
+    } else if (typeof k === "object") {
+      const [[k2, v]] = Object.entries(k);
+      let v2;
+      if (isRegexp(v)) {
+        v2 = v.source;
+      } else if (typeof v === "function") {
+        v2 = v().source;
+      } else {
+        v2 = v.toString();
+      }
+      result += `(?<${k2}>${v2})`;
     } else {
       result += k.toString();
     }
@@ -29,9 +40,27 @@ const time = () => re`${hours}:${minutes}:${secounds}(?:\.[0-9]{1,9})`;
 const dateTime = () => re`${date}[_T ]${time}`;
 const file = () => /[\w_]+\.\w+/;
 
+// based on https://github.com/PrismJS/prism/blob/master/components/prism-log.js
+const string = () => /"(?:[^"\\\r\n]|\\.)*"|'(?![st] | \w)(?:[^'\\\r\n]|\\.)*'/;
+const uuid = () =>
+  /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i;
+const filePath = () =>
+  /\b[a-z]:[\\/][^\s|,;:(){}\[\]"']+|(^|[\s:\[\](>|])\.{0,2}\/\w[^\s|,;:(){}\[\]"']*/i;
+
 // https://github.com/golang/glog/blob/master/glog.go#L524
 // Lmmdd hh:mm:ss.uuuuuu threadid file:line] msg...
-const klog = () =>
-  re`(?<level>[A-Z])(?<date>${month}${day})\\s+(?<time>${time})\\s+\\d+\\s+(?<file>${file}):(?<line>\\d+)\\].*`;
+export function klog() {
+  const level = /[A-Z]/;
+  const line = /\d+/;
+  const date = re`${month}${day}`;
+  const log = /.*/;
+  return re`${{ level }}${{ date }}\\s+${{ time }}\\s+\\d+\\s+${{ file }}:${{
+    line,
+  }}\\]\\s+${{ log }}`;
+}
 
-export { date, dateTime, file, klog, time };
+export function log() {
+  return re`(${{ string }}|${{ uuid }}|${{ filePath }}|.)*`;
+}
+
+export { date, dateTime, file, time };
