@@ -5,6 +5,8 @@ import * as highlight from "./highlight.js";
 import * as re from "./re.js";
 import { open } from "https://deno.land/x/opener/mod.ts";
 import * as fs from "https://deno.land/std@0.95.0/fs/mod.ts";
+import * as path from "https://deno.land/std@0.92.0/path/mod.ts";
+import "https://unpkg.com/sql-formatter@4.0.2/dist/sql-formatter.js";
 
 function concat(strings, keys) {
   let result = strings[0];
@@ -51,7 +53,13 @@ const log = {
 export const query = { log };
 
 export function configure(
-  { host, auth, query: preQuery, output = "log.html", format = "full" },
+  {
+    host,
+    auth,
+    query: preQuery,
+    output = `${path.basename(Deno.mainModule)}.html`,
+    format = "full",
+  },
 ) {
   const cli = cac();
   cli.command("[...string]")
@@ -153,7 +161,13 @@ async function queryCmd(
         write: true,
       });
       await addHtmlHeader(outFile);
-      const header = `Query: <code class="language-sql">${resQuery}</code>`;
+      const header = `
+<div>From: ${from}</div>
+<div>To: ${to}</div>
+<div>Query: <pre><code class="language-sql">${
+        window.sqlFormatter.format(resQuery, { language: "postgresql" })
+      }</code></pre></div>
+`;
       await writeAll(outFile, new TextEncoder().encode(header));
     } else {
       console.log(`Query: ${resQuery}\n`);
