@@ -1,7 +1,6 @@
 import * as path from "https://deno.land/std@0.92.0/path/mod.ts";
 import * as fs from "https://deno.land/std@0.92.0/fs/mod.ts";
 import { pathToRegexp } from "https://deno.land/x/path_to_regexp@v6.2.0/index.ts";
-import { delay } from "https://deno.land/std@0.92.0/async/mod.ts";
 
 export async function all(src, dest, exclude = []) {
   const skip = exclude.map((e) =>
@@ -30,6 +29,7 @@ async function copy(src, dest, mkdirTasks) {
     destInfo = await Deno.stat(dest);
   } catch {}
   if (!destInfo || srcInfo.mtime > destInfo.mtime) {
+    console.log(`sync ${src}`);
     const dir = path.dirname(dest);
     if (!mkdirTasks[dir]) {
       mkdirTasks[dir] = Deno.mkdir(dir, { recursive: true });
@@ -38,3 +38,12 @@ async function copy(src, dest, mkdirTasks) {
     await Deno.copyFile(src, dest);
   }
 }
+
+// async function getTempDir(src) {
+//   const srcInfo = await Deno.stat(src);
+//   const tmp = `/tmp/sync-${src}-{$srcInfo.mtime}`;
+//   if (!await fs.exists(tmp)) {
+//     await Deno.mkdir(tmp);
+//   }
+//   return tmp;
+// }
