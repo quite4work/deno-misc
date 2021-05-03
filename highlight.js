@@ -1,12 +1,11 @@
 export function html(text, regex, colors) {
   let res = text;
   const insert = {};
-  const match = text.match(new RegExp(regex, "d"));
-  if (match) {
+  for (const match of text.matchAll(new RegExp(regex, "dg"))) {
     for (const [k, v] of Object.entries(match.indices.groups)) {
       const color = colors[k];
-      // if (color.$) {
-      //   res = html(res, color.$, color);
+      // if (typeof color === "function") {
+      //   res = color(res);
       // } else {
       let o = "", c = "";
       if (color) {
@@ -25,7 +24,6 @@ export function html(text, regex, colors) {
           insert[v[1]] = `${c}`;
         }
       }
-
       // }
     }
     res = insertTextAtIndices(res, insert);

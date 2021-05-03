@@ -221,7 +221,13 @@ function higligthLog(str) {
     level: "green",
     file: "green",
     line: "blue",
-    // log: { $: re.log(), string: "red", filePath: "green", uuid: "purpure" },
+    // log(str) {
+    //   return highlight.html(str, re.log(), {
+    //     string: "red",
+    //     filePath: "green",
+    //     uuid: "purpure",
+    //   });
+    // },
   });
 }
 
