@@ -153,12 +153,13 @@ async function queryCmd(
         write: true,
       });
       await addHtmlHeader(outFile);
+      const formattedQuery = window.sqlFormatter.format(resQuery, {
+        language: "postgresql",
+      });
       const header = `
 <div>From: ${from}</div>
 <div>To: ${to}</div>
-<div>Query: <pre><code class="language-sql">${
-        window.sqlFormatter.format(resQuery, { language: "postgresql" })
-      }</code></pre></div>
+<div>Query: <pre style="overflow:visible"><code class="language-sql">${formattedQuery}</code></pre></div>
 `;
       await writeAll(outFile, new TextEncoder().encode(header));
     } else {
