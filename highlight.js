@@ -44,3 +44,7 @@ function insertTextAtIndices(str, text) {
 function splitAt(slicable, ...indices) {
   return [0, ...indices].map((n, i, m) => slicable.slice(n, m[i + 1]));
 }
+
+function replace(str, replacement, cutStart, cutEnd) {
+  return str.substr(0, cutStart) + replacement + str.substr(cutEnd + 1);
+}
