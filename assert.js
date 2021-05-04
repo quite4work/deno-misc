@@ -1,4 +1,12 @@
-import { assertStringIncludes } from "https://deno.land/std@0.92.0/testing/asserts.ts";
+import {
+  assert,
+  assertStringIncludes,
+} from "https://deno.land/std@0.92.0/testing/asserts.ts";
+import * as adhoc from "./adhoc.js";
+
+export async function replaceInFile(file, regex, replacement) {
+  return assert(await adhoc.replaceInFile(file, regex, replacement));
+}
 
 export async function pageIncludes(url, text) {
   const resp = await fetch(url);
