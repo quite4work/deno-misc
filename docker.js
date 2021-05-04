@@ -1,7 +1,7 @@
 import {
   ish,
   sh,
-} from "https://cdn.jsdelivr.net/gh/quite4work/deno-shell-tag@0.0.3/mod.ts";
+} from "https://cdn.jsdelivr.net/gh/quite4work/deno_shell_tag@0.0.3/mod.ts";
 import { delay } from "https://deno.land/std@0.95.0/async/mod.ts";
 
 // DWIM function
