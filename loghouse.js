@@ -6,7 +6,7 @@ import * as re from "./re.js";
 import * as adhoc from "./adhoc.js";
 import { open } from "https://deno.land/x/opener@v1.0.1/mod.ts";
 import * as fs from "https://deno.land/std@0.95.0/fs/mod.ts";
-import * as path from "https://deno.land/std@0.92.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.95.0/path/mod.ts";
 import "https://unpkg.com/sql-formatter@4.0.2/dist/sql-formatter.js";
 
 const log = {

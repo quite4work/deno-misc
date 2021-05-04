@@ -1,4 +1,4 @@
-import * as yaml from "https://deno.land/std@0.92.0/encoding/yaml.ts";
+import * as yaml from "https://deno.land/std@0.95.0/encoding/yaml.ts";
 
 export async function read(file, opts) {
   let schema;

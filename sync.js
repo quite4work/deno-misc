@@ -1,5 +1,5 @@
-import * as path from "https://deno.land/std@0.92.0/path/mod.ts";
-import * as fs from "https://deno.land/std@0.92.0/fs/mod.ts";
+import * as path from "https://deno.land/std@0.95.0/path/mod.ts";
+import * as fs from "https://deno.land/std@0.95.0/fs/mod.ts";
 import { pathToRegexp } from "https://deno.land/x/path_to_regexp@v6.2.0/index.ts";
 
 export async function all(src, dest, exclude = []) {

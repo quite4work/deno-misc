@@ -1,5 +1,5 @@
-import { DEFAULT_SCHEMA } from "https://deno.land/std@0.94.0/encoding/yaml.ts";
-import { Type } from "https://deno.land/std@0.94.0/encoding/_yaml/type.ts";
+import { DEFAULT_SCHEMA } from "https://deno.land/std@0.95.0/encoding/yaml.ts";
+import { Type } from "https://deno.land/std@0.95.0/encoding/_yaml/type.ts";
 import { promptSecret } from "https://cdn.jsdelivr.net/gh/quite4work/deno-prompts@0.0.1/mod.ts";
 import { configure } from "./yaml.js";
 

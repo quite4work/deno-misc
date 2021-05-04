@@ -1,7 +1,7 @@
 import {
   assert,
   assertStringIncludes,
-} from "https://deno.land/std@0.92.0/testing/asserts.ts";
+} from "https://deno.land/std@0.95.0/testing/asserts.ts";
 import * as adhoc from "./adhoc.js";
 
 // TODO: module name conflicts with assert function from std
