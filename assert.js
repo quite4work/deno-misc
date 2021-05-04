@@ -16,7 +16,7 @@ export async function pageIncludes(url, text) {
       assertStringIncludes(body, i, `ur ${url} douesnt include: ${i}`);
     }
   } else if (typeof text === "string") {
-    assertStringIncludes(body, i, `url ${url} douesnt include: ${text}`);
+    assertStringIncludes(body, text, `url ${url} douesnt include: ${text}`);
   } else {
     throw ("badarg");
   }
