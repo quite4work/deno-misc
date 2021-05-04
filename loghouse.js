@@ -4,7 +4,7 @@ import { writeAll } from "https://deno.land/std@0.95.0/io/util.ts";
 import * as highlight from "./highlight.js";
 import * as re from "./re.js";
 import * as adhoc from "./adhoc.js";
-import { open } from "https://deno.land/x/opener/mod.ts";
+import { open } from "https://deno.land/x/opener@v1.0.1/mod.ts";
 import * as fs from "https://deno.land/std@0.95.0/fs/mod.ts";
 import * as path from "https://deno.land/std@0.92.0/path/mod.ts";
 import "https://unpkg.com/sql-formatter@4.0.2/dist/sql-formatter.js";
@@ -50,7 +50,7 @@ export function configure(
     auth,
     query: preQuery,
     output = `${path.basename(Deno.mainModule)}.html`,
-    format = "full",
+    format = "long",
   },
 ) {
   const cli = cac();
@@ -179,7 +179,7 @@ async function queryCmd(
     ) {
       const details =
         `${timestamp} host = "${host}" stream = "${stream}" source = "${source}" namespace = "${namespace}" pod_name = "${pod_name}" container_name = "${container_name}"`;
-      if (format === "full") {
+      if (format === "long") {
         console.log(`* ${details}\n${log}\n`);
       } else if (format === "short") {
         console.log(`|${log} // ${details}`);
