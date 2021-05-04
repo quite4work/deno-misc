@@ -4,6 +4,8 @@ import {
 } from "https://deno.land/std@0.92.0/testing/asserts.ts";
 import * as adhoc from "./adhoc.js";
 
+// TODO: module name conflicts with assert function from std
+
 export async function replaceInFile(file, regex, replacement) {
   return assert(await adhoc.replaceInFile(file, regex, replacement));
 }
