@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 
-import { readLines } from "https://deno.land/std@0.92.0/io/mod.ts";
+import { readLines } from "https://deno.land/std@0.95.0/io/mod.ts";
 async function log(proc: Deno.Process) {
   for await (const line of readLines(proc.stdout)) {
     console.log(line);
