@@ -7,7 +7,7 @@ async function log(proc: Deno.Process) {
   }
 }
 
-async function spawn(command: string) {
+export async function spawn(command: string) {
   const proc = Deno.run({
     cmd: [
       "/bin/sh",
@@ -100,5 +100,3 @@ async function evalF(proc: Deno.Process, command: string) {
 function escape(text: string) {
   return JSON.stringify(text).slice(1, -1).replaceAll("[", "\\[");
 }
-
-export default spawn;
